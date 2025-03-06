@@ -4,8 +4,6 @@ services:
     container_name: OpenSignServer-container
     volumes:
       - opensign-files:/usr/src/app/files
-    ports:
-      - "8080:8080"
     depends_on:
       - mongo
     env_file: .env.prod
@@ -19,8 +17,6 @@ services:
     container_name: mongo-container
     volumes:
       - data-volume:/data/db
-    ports:
-      - "27018:27017"
     networks:
       - app-network
   client:
@@ -28,27 +24,9 @@ services:
     container_name: OpenSign-container
     depends_on:
       - server
-    env_file: .env.prod  
-    ports:
-      - "3000:3000"
+    env_file: .env.prod
     networks:
       - app-network
-  caddy:
-    image: caddy:latest
-    container_name: caddy-container
-    ports:
-      - "3001:3001"
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - app-network
-    environment:
-      - HOST_URL=${HOST_URL:-localhost:3001}
 networks:
   app-network:
     driver: bridge
